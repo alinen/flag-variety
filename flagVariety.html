@@ -1,0 +1,50 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var t = 0;
+var pause = false;
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height, WEBGL);
+   console.log("TEST");
+}
+
+function mousePressed()
+{
+  pause = !pause;
+}
+
+function draw() 
+{
+  background(0);
+  push();
+  rotateY(t * 0.1);
+
+  fill(255,0,0);
+  beginShape(TRIANGLE_STRIP);
+  vertex(0, 0, 0);
+  vertex(-100, 100, 0);
+  vertex(100, 100, 0);
+  vertex(100, 200, 0);
+  endShape();
+  fill(0,255,0);
+  beginShape(TRIANGLE_STRIP);
+  vertex(0,0,0);
+  vertex(100,100,0);
+  vertex(-100,100,0);
+  vertex(-100,200,100);
+  endShape();
+  pop();
+  if (!pause) t += 1;
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
