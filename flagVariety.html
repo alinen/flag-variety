@@ -46,10 +46,14 @@ function sampleBezier2D(u, v, ctrlPoints)
 //  |                    |
 //  |                    |
 //  a ------------------ d
-function drawBezierPatch(a, b, c, d)
+function drawBezierPatch(a, b, c, d, n)
 {
   // 1. compute control points
   ctrlPoints = [[],[],[],[]];
+  var midx = 0.25 * (a.x + b.x + c.x + d.x);
+  var midy = 0.25 * (a.y + b.y + c.y + d.y);
+  var midz = 0.25 * (a.z + b.z + c.z + d.z);
+
   for (var i = 0; i <= 3; i++)
   {
     var fraci = i/3.0;
@@ -59,12 +63,26 @@ function drawBezierPatch(a, b, c, d)
       var pt1 = LERP(a, b, fraci);
       var pt2 = LERP(d, c, fraci);
       var pt = LERP(pt1, pt2, fracj);
-      ctrlPoints[i][j] = pt;
+
+      if (n!==undefined)
+      {
+        var blend = Math.max(Math.abs(fraci-0.5)*2.0, Math.abs(fracj-0.5)*2.0);
+        var offset = LERP(n, {x:0,y:0,z:0}, blend);
+        var ctrlPtx = offset.x + pt.x;
+        var ctrlPty = offset.y + pt.y;
+        var ctrlPtz = offset.z + pt.z;
+        //console.log(d+" "+ctrlPtx +" "+ctrlPty+" "+ctrlPtz);
+        ctrlPoints[i][j] = {x:ctrlPtx, y:ctrlPty, z:ctrlPtz};
+      }
+      else
+      {
+        ctrlPoints[i][j] = {x:pt.x, y:pt.y, z:pt.z};
+      }
     }
   }
 
   // 2. draw mesh
-  numSubDivisions = 3;
+  numSubDivisions = 10;
   dx = 1.0/numSubDivisions;
 
   for (var i = 0; i < numSubDivisions; i++)
@@ -97,31 +115,60 @@ function mousePressed()
 
 function draw() 
 {
-    background(0);
+  background(0);
  
   push();
   rotateY(t * 0.05);
-  translate(0,-100,0);
+  translate(0,-150,0);
+
+  fill(255);
+  stroke(255);
+  push();
+  translate(0,0,0);
+  sphere(5, 5, 5);
+  pop();
+
   fill(255,0,0, 128);
   drawBezierPatch(
     {x:0, y:0, z:0}, 
     {x:-100, y:100, z:0},
-    {x: 100, y:200, z:-100},
-    {x: 100, y:100, z:0});
+    {x: 100, y:200, z:0},
+    {x: 100, y:100, z:0},
+    {x: 0, y: 0, z: -100});
 
   fill(0,255,0,128);
   drawBezierPatch(
     {x:0, y:0, z:0}, 
     {x:-100, y:100, z:0},
-    {x:-100, y:200, z:100},
+    {x:-100, y:200, z:0},
+    {x: 100, y:100, z:0},
+    {x: 0, y: 0, z: 100});
+
+  fill(0,255,0,255);
+  beginShape(LINES);
+  vertex(0,0,0);
+  vertex(-100,100,0);
+  endShape();
+
+  fill(255,0,0, 255);
+  beginShape(LINES);
+  vertex(0,0,0);
+  vertex(100,100,0);
+  endShape();
+
+  fill(255,255,0,128);
+  drawBezierPatch(
+    {x:-100, y:200, z:0},
+    {x:0,    y:300, z:0}, 
+    {x:100,  y:200, z:0},
+    {x:100,  y:100, z:0});
+
+  drawBezierPatch(
+    {x:0, y:0, z:0},
+    {x:-100, y:100, z:0}, 
+    {x:-100, y:200, z:0},
     {x: 100, y:100, z:0});
 
-  //fill(0,255,0,128);
-  //drawBezierPatch(
-    //{x:0, y:0, z:0}, 
-    //{x:-100, y:100, z:0},
-    //{x:-100, y:200, z:100},
-    //{x: 100, y:100, z:0});
 
   pop();
 
