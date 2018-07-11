@@ -5,45 +5,7 @@
 </script>
 
 <script language="javascript" type="text/javascript">
-  //
-  //  Use a closure to hide the local variables from the
-  //  global namespace
-  //
-  (function () {
-    var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
-    var math = null, box = null;    // the element jax for the math output, and the box it's in
 
-    //
-    //  Get the element jax when MathJax has produced it.
-    //
-    QUEUE.Push(function () {
-      math = MathJax.Hub.getAllJax("MathOutput")[0];
-    });
-
-    //
-    //  The onchange event handler that typesets the math entered
-    //  by the user.  Hide the box, then typeset, then show it again
-    //  so we don't see a flash as the math is cleared and replaced.
-    //
-    window.UpdateMath = function (TeX) {
-       a = 'a';
-       if (TeX === '0') a = '0';
-       else if (TeX === '100') a = '\\infty';
-       str = "\\begin{bmatrix}\n";
-       str += a+" &1&0\\\\ \n";
-       str += "1&0&0\\\\ \n";
-       str += "0&0&1 \n";
-       str += "\\end{bmatrix}\n";
-       console.log(str);
-      QUEUE.Push(
-          ["resetEquationNumbers",MathJax.InputJax.TeX],
-          ["Text",math,"\\displaystyle{"+str+"}"],
-      );
-    }
-  })();
-</script>
-
-<script language="javascript" type="text/javascript">
 class Flag
 {
   constructor(ptx, pty, linex1, liney1, linex2, liney2)
@@ -55,35 +17,63 @@ class Flag
      this.linex2 = linex2;
      this.liney2 = liney2;
   }
+
+  draw()
+  {
+     fill(255, 127, 0);
+     stroke(255, 127, 0);
+     strokeWeight(16);
+     ellipse(this.ptx, this.pty, 40, 40);
+     line(this.linex1, this.liney1, this.linex2, this.liney2);
+
+     fill(0, 0, 0);
+     stroke(0, 0, 0);
+     strokeWeight(2);
+     ellipse(200, 350, 25, 25);
+     line(100, 350, 400, 350);      
+  }
 }
 
-var flag1 = new Flag(100, 250, 100, 250, 400, 250);
-var flag2 = new Flag(400, 250, 100, 250, 400, 250);
-
-function interpolate(f1, f2, alpha)
+class FlagVariety
 {
-   var ptx = flag1.ptx * (1-alpha) + flag2.ptx * alpha;
-   var pty = flag1.pty * (1-alpha) + flag2.pty * alpha;
-   var linex1 = flag1.linex1 * (1-alpha) + flag2.linex1 * alpha;
-   var liney1 = flag1.liney1 * (1-alpha) + flag2.liney1 * alpha;
-   var linex2 = flag1.linex2 * (1-alpha) + flag2.linex2 * alpha;
-   var liney2 = flag1.liney2 * (1-alpha) + flag2.liney2 * alpha;
-   return new Flag(ptx, pty, linex1, liney1, linex2, liney2);
+  constructor(f1, f2, size, offset)
+  {
+    this.f1 = f1;
+    this.f2 = f2;
+    this.offset = offset;
+    this.scale = size/500.0;
+  }
+
+  interpolate(f1, f2, alpha)
+  {
+     var ptx = flag1.ptx * (1-alpha) + flag2.ptx * alpha;
+     var pty = flag1.pty * (1-alpha) + flag2.pty * alpha;
+     var linex1 = flag1.linex1 * (1-alpha) + flag2.linex1 * alpha;
+     var liney1 = flag1.liney1 * (1-alpha) + flag2.liney1 * alpha;
+     var linex2 = flag1.linex2 * (1-alpha) + flag2.linex2 * alpha;
+     var liney2 = flag1.liney2 * (1-alpha) + flag2.liney2 * alpha;
+     return new Flag(ptx, pty, linex1, liney1, linex2, liney2);
+  }
+
+  draw()
+  {
+     push();
+     scale(this.scale);
+     var a = document.getElementById('a').value / 100.0;
+     var flag = this.interpolate(this.f1, this.f2, a);
+     flag.draw();
+     pop();
+  }
 }
 
-function drawFlag(f)
-{
-   fill(255, 127, 0);
-   stroke(255, 127, 0);
-   strokeWeight(16);
-   ellipse(f.ptx, f.pty, 40, 40);
-   line(f.linex1, f.liney1, f.linex2, f.liney2);
-}
+var flag1 = new Flag(100, 350, 100, 350, 400, 350);
+var flag2 = new Flag(400, 350, 100, 350, 400, 350);
+var variety = new FlagVariety(flag1, flag2, 200, {x:0,y:0});
 
 function setup() 
 {
-   var width = 500.0;
-   var height = 500.0;
+   var width = 200.0;
+   var height = 200.0;
 
    createCanvas(width, height);
    console.log("TEST");   
@@ -92,22 +82,26 @@ function setup()
 function draw() 
 {
    background(200);
-   
-   var a = document.getElementById('a').value / 100.0;
-   flag = interpolate(flag1, flag2, a);
-   drawFlag(flag);
-
-   fill(0, 0, 0);
-   stroke(0, 0, 0);
-   strokeWeight(2);
-   ellipse(200, 250, 25, 25);
-   line(100, 250, 400, 250);      
+   variety.draw();
 }
 
 </script>
+
 <body>
-<label for="points">a:</label> <input type="range" name="points" id="a" value="50" min="0" max="100" onchange="UpdateMath(this.value)"/>
-<div id="MathOutput">
+<div id="slider" style="position:absolute;top:1em;left:1em;">
+<label for="points">a</label> <input type="range" name="points" id="a" value="50" min="0" max="100" onchange="UpdateMath(this.value)" style="vertical-align:middle;"/>
+</div>
+<div style="display:flex;flex-direction:row;flex-wrap:nowrap;position:absolute;top:2em;left:1em">
+<div id="a0" style="width:0px;visibility:hidden">
+\[
+\begin{bmatrix}
+0 &1&0\\
+1&0&0\\
+0&0&1
+\end{bmatrix}
+\]
+</div>
+<div id="a">
 \[
 \begin{bmatrix}
 a &1&0\\
@@ -115,6 +109,16 @@ a &1&0\\
 0&0&1
 \end{bmatrix}
 \]
+</div>
+<div id="aInf" style="width:0px;visibility:hidden">
+\[
+\begin{bmatrix}
+\infty &1&0\\
+1&0&0\\
+0&0&1
+\end{bmatrix}
+\]
+</div>
 </div>
 
 </body>
