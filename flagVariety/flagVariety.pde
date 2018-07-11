@@ -41,7 +41,7 @@ PVector sampleBezier2D(float u, float v, PVector[][] ctrlPoints)
 
 float segmentDistance(PVector pt, PVector a, PVector b)
 {
-  PVector ab = new PVector(); //<>//
+  PVector ab = new PVector();
   PVector.sub(b, a, ab);
   float L = ab.mag();
   ab.normalize();
@@ -54,7 +54,7 @@ float segmentDistance(PVector pt, PVector a, PVector b)
   if (dot >= L) return pt.dist(b);
   
   PVector closest = new PVector();
-  closest.set(pt);
+  closest.set(pa);
   closest.sub(ab.mult(dot));
   float distance = closest.mag();
   return distance;
@@ -92,7 +92,7 @@ void drawBezierPatch(PVector a, PVector b, PVector c, PVector d, PVector n)
         //float blend = Math.max(Math.abs(fraci-0.5)*2.0, Math.abs(fracj-0.5)*2.0);
         float distanceToCenter = pt.dist(new PVector(0,150,0));
         float distanceToBorder = distanceTo(pt, a, b, c, d);
-        float blend = Math.min(distanceToBorder, distanceToCenter/(distanceToBorder+distanceToCenter));
+        float blend = distanceToCenter/(distanceToBorder+distanceToCenter);
         PVector offset = LERP(n, new PVector(0,0,0), blend);
         float ctrlPtx = offset.x + pt.x;
         float ctrlPty = offset.y + pt.y;
@@ -128,10 +128,7 @@ void drawBezierPatch(PVector a, PVector b, PVector c, PVector d, PVector n)
 void setup() 
 {
    size(500, 500, P3D);
-   print("TEST");
-   
-   
-   segmentDistance(new PVector(-50,50,0),  new PVector(   0, 0, 0),  new PVector(-100, 100, 0)); //<>//
+   print("TEST"); //<>//
 }
 
 void mousePressed()
@@ -156,35 +153,50 @@ void draw()
   sphere(5);
   popMatrix();
 
-  fill(255,0,0, 128);
-  drawBezierPatch(
-    new PVector(   0, 0, 0), 
-    new PVector(-100, 100, 0),
-    new PVector( 100, 200, 0),
-    new PVector( 100, 100, 0),
-    new PVector(   0, 0, -100));
-
-/*
-  fill(0,255,0,128);
-  drawBezierPatch(
-    new PVector(0, 0, 0), 
-    new PVector(-100, 100, 0),
-    new PVector(-100, 200, 0),
-    new PVector( 100, 100, 0),
-    new PVector( 0,  0, 100));
-*/
   fill(255,255,0,128);
   drawBezierPatch(
-    new PVector(-100, 200, 0),
-    new PVector(0,    300, 0), 
+    new PVector(100,  100, 0), 
     new PVector(100,  200, 0),
-    new PVector(100,  100, 0), null);
+    new PVector(0,    300, 0), 
+    new PVector(-100, 200, 0),    
+    new PVector( 0,  0, 85));
 
   drawBezierPatch(
-    new PVector(0, 0, 0),
-    new PVector(-100, 100, 0), 
     new PVector(-100, 200, 0),
-    new PVector( 100, 100, 0), null);
+    new PVector(-100, 100, 0), 
+    new PVector(0, 0, 0),
+    new PVector( 100, 100, 0),     
+    new PVector( 0,  0, 85));
+
+  drawBezierPatch(
+    new PVector(100,  200, 0), 
+    new PVector(0,    300, 0), 
+    new PVector(-100,  200, 0),
+    new PVector(-100, 100, 0),    
+    new PVector( 0,  0, -85));
+
+  drawBezierPatch(
+    new PVector(-100, 100, 0),
+    new PVector(0, 0, 0),    
+    new PVector(100, 100, 0), 
+    new PVector( 100, 200, 0),     
+    new PVector( 0,  0, -85));    
+
+  fill(255,0,0, 128);
+  drawBezierPatch(
+    new PVector( 100, 200, 0),
+    new PVector( 100, 100, 0),
+    new PVector(   0, 0, 0), 
+    new PVector(-100, 100, 0),
+    new PVector(   0, 0, -100));
+
+  fill(0,255,0,128);
+  drawBezierPatch(
+    new PVector(-100, 200, 0),
+    new PVector(-100, 100, 0),
+    new PVector(0, 0, 0), 
+    new PVector( 100, 100, 0),
+    new PVector( 0,  0, 100));
 
   stroke(0,255,0,255);
   strokeWeight(10);
