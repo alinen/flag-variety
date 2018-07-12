@@ -29,97 +29,412 @@ class Flag
      fill(0, 0, 0);
      stroke(0, 0, 0);
      strokeWeight(2);
-     ellipse(200, 350, 25, 25);
+     ellipse(400, 350, 25, 25);
      line(100, 350, 400, 350);      
   }
 }
 
 class FlagVariety
 {
-  constructor(f1, f2, size, offset)
+  constructor(size, offset)
   {
-    this.f1 = f1;
-    this.f2 = f2;
     this.offset = offset;
     this.scale = size/500.0;
   }
 
   interpolate(f1, f2, alpha)
   {
-     var ptx = flag1.ptx * (1-alpha) + flag2.ptx * alpha;
-     var pty = flag1.pty * (1-alpha) + flag2.pty * alpha;
-     var linex1 = flag1.linex1 * (1-alpha) + flag2.linex1 * alpha;
-     var liney1 = flag1.liney1 * (1-alpha) + flag2.liney1 * alpha;
-     var linex2 = flag1.linex2 * (1-alpha) + flag2.linex2 * alpha;
-     var liney2 = flag1.liney2 * (1-alpha) + flag2.liney2 * alpha;
+     var ptx = f1.ptx * (1-alpha) + f2.ptx * alpha;
+     var pty = f1.pty * (1-alpha) + f2.pty * alpha;
+     var linex1 = f1.linex1 * (1-alpha) + f2.linex1 * alpha;
+     var liney1 = f1.liney1 * (1-alpha) + f2.liney1 * alpha;
+     var linex2 = f1.linex2 * (1-alpha) + f2.linex2 * alpha;
+     var liney2 = f1.liney2 * (1-alpha) + f2.liney2 * alpha;
      return new Flag(ptx, pty, linex1, liney1, linex2, liney2);
   }
 
   draw()
   {
      push();
+     translate(this.offset.x, this.offset.y);
      scale(this.scale);
-     var a = document.getElementById('a').value / 100.0;
-     var flag = this.interpolate(this.f1, this.f2, a);
-     flag.draw();
-     pop();
+     this._draw();
+     pop();    
+  }
+
+  _draw()
+  {
   }
 }
 
-var flag1 = new Flag(100, 350, 100, 350, 400, 350);
-var flag2 = new Flag(400, 350, 100, 350, 400, 350);
-var variety = new FlagVariety(flag1, flag2, 200, {x:0,y:0});
+class FlagVariety0 extends FlagVariety
+{
+  constructor(size, offset)
+  {
+    super(size, offset);
+    this.f1 = new Flag(100, 350, 100, 350, 400, 350);
+    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
 
+    var htmlElement = document.getElementById("FlagVariety0");
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+  }
+
+  _draw()
+  {
+     this.f2.draw();
+  }
+}
+
+class FlagVariety1 extends FlagVariety
+{
+  constructor(size, offset)
+  {
+    super(size, offset);
+    this.f1 = new Flag(100, 350, 100, 350, 400, 350);
+    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+
+    var htmlElement = document.getElementById("FlagVariety1");
+    this.sliderA = htmlElement.getElementsByClassName('slider')[0];
+    this.sliderA.onchange = this.updateMatrix;
+    this.sliderA.value = 50;
+
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+  }
+
+  _draw()
+  {
+     var a = this.sliderA.value / 100.0;
+     var flag = this.interpolate(this.f1, this.f2, a);
+     flag.draw();
+  }
+
+  updateMatrix()
+  {
+    var v = document.getElementById("a1");
+    var a1_0 = document.getElementById("mA1_0");
+    var a1 = document.getElementById("mA1");
+    var aInf = document.getElementById("mA1_Inf");
+    if (v.value === "0")
+    {
+      a1_0.style.visibility = 'visible';
+      a1.style.visibility = 'hidden';
+      aInf.style.visibility = 'hidden';
+    }
+    else if (v.value === "100")
+    {
+      a1_0.style.visibility = 'hidden';
+      a1.style.visibility = 'hidden';
+      aInf.style.visibility = 'visible';
+    }
+    else
+    {
+      a1_0.style.visibility = 'hidden';
+      a1.style.visibility = 'visible';
+      aInf.style.visibility = 'hidden';
+    }
+  }
+}
+
+class FlagVariety2 extends FlagVariety
+{
+  constructor(size, offset)
+  {
+    super(size, offset);
+    this.f1 = new Flag(400, 350, 100, 250, 400, 350);
+    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+
+    var htmlElement = document.getElementById("FlagVariety2");
+    this.sliderC = htmlElement.getElementsByClassName('slider')[0];
+    // TODO this.sliderC.onchange = this.updateMatrix;
+    this.sliderC.value = 50;
+
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+  }
+
+  _draw()
+  {
+     var c = this.sliderC.value / 100.0;
+     var flag = this.interpolate(this.f1, this.f2, c);
+     flag.draw();
+  }
+
+  updateMatrix()
+  {
+  }
+}
+
+class FlagVariety3 extends FlagVariety
+{
+  constructor(size, offset)
+  {
+    super(size, offset);
+
+    var ptx = 200;
+    var pty = 350;
+    var totalLen = 300;
+    var l1 = 0.3 * totalLen;
+    var l2 = 0.7 * totalLen;
+    var cx = Math.cos(-0.7);
+    var sx = Math.sin(-0.7);
+    this.f1 = new Flag(ptx, pty, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
+    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+
+    var htmlElement = document.getElementById("FlagVariety3");
+    //this.sliderC = htmlElement.getElementsByClassName('slider')[0];
+    // TODO this.sliderC.onchange = this.updateMatrix;
+    //this.sliderC.value = 50;
+
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+  }
+
+  _draw()
+  {
+     //var c = this.sliderC.value / 100.0;
+     //var flag = this.interpolate(this.f1, this.f2, c);
+     //flag.draw();
+    this.f1.draw();
+  }
+
+  updateMatrix()
+  {
+  }
+}
+
+class FlagVariety4 extends FlagVariety
+{
+  constructor(size, offset)
+  {
+    super(size, offset);
+
+    var ptx = 400;
+    var pty = 350;
+    var totalLen = 300;
+    var l1 = 1.0 * totalLen;
+    var l2 = 0.0 * totalLen;
+    var l3 = 0.7 * totalLen;
+    var cx = Math.cos(0.4);
+    var sx = Math.sin(0.4);
+    this.f1 = new Flag(ptx-l3*cx, pty-l3*sx, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
+    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+
+    var htmlElement = document.getElementById("FlagVariety4");
+    //this.sliderC = htmlElement.getElementsByClassName('slider')[0];
+    // TODO this.sliderC.onchange = this.updateMatrix;
+    //this.sliderC.value = 50;
+
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+  }
+
+  _draw()
+  {
+    //var c = this.sliderC.value / 100.0;
+    //var flag = this.interpolate(this.f1, this.f2, c);
+    //flag.draw();
+    this.f1.draw();
+  }
+
+  updateMatrix()
+  {
+  }
+}
+
+class FlagVariety5 extends FlagVariety
+{
+  constructor(size, offset)
+  {
+    super(size, offset);
+    var ptx = 400;
+    var pty = 200;
+    var totalLen = 300;
+    var l1 = 1.0 * totalLen;
+    var l2 = 0.0 * totalLen;
+    var l3 = 0.7 * totalLen;
+    var cx = Math.cos(-0.4);
+    var sx = Math.sin(-0.4);
+    this.f1 = new Flag(ptx-l3*cx, pty-l3*sx, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
+
+    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+
+    var htmlElement = document.getElementById("FlagVariety5");
+    //this.sliderC = htmlElement.getElementsByClassName('slider')[0];
+    // TODO this.sliderC.onchange = this.updateMatrix;
+    //this.sliderC.value = 50;
+
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+  }
+
+  _draw()
+  {
+     //var c = this.sliderC.value / 100.0;
+     //var flag = this.interpolate(this.f1, this.f2, c);
+     //flag.draw();
+    this.f1.draw();
+  }
+
+  updateMatrix()
+  {
+  }
+}
+
+var varieties = [];
 function setup() 
 {
-   var width = 200.0;
-   var height = 200.0;
+  var size = 200;
+  var width = size * 3;
+  var height = size * 4;
 
-   createCanvas(width, height);
-   console.log("TEST");   
+  createCanvas(width, height);
+  varieties.push(new FlagVariety5(size, {x:size,   y:0}));
+  varieties.push(new FlagVariety4(size, {x:size*2, y:size}));
+  varieties.push(new FlagVariety3(size, {x:  0,    y:size}));
+  varieties.push(new FlagVariety2(size, {x:size*2, y:size*2}));
+  varieties.push(new FlagVariety1(size, {x:  0,    y:size*2}));
+  varieties.push(new FlagVariety0(size, {x:size,   y:size*3}));
 }
 
 function draw() 
 {
    background(200);
-   variety.draw();
+   for (var i = 0; i < varieties.length; i++)
+   {
+     varieties[i].draw();
+   }
 }
+
 
 </script>
 
 <body>
-<div id="slider" style="position:absolute;top:1em;left:1em;">
-<label for="points">a</label> <input type="range" name="points" id="a" value="50" min="0" max="100" onchange="UpdateMath(this.value)" style="vertical-align:middle;"/>
+
+<div id="FlagVariety0" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
+    <div id="mA0" style="width:0px;visibility:visible">
+    \[
+    \begin{bmatrix}
+    1 &0&0\\
+    0&1&0\\
+    0&0&1
+    \end{bmatrix}
+    \]
+    </div>
+  </div>
 </div>
-<div style="display:flex;flex-direction:row;flex-wrap:nowrap;position:absolute;top:2em;left:1em">
-<div id="a0" style="width:0px;visibility:hidden">
-\[
-\begin{bmatrix}
-0 &1&0\\
-1&0&0\\
-0&0&1
-\end{bmatrix}
-\]
+
+<div id="FlagVariety1" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="a1">a</label> 
+    <input type="range" name="a1" id="a1" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+  <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
+    <div id="mA1_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0 &1&0\\
+    1&0&0\\
+    0&0&1
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="mA1" style="width:0px;visibility:visible">
+    \[
+    \begin{bmatrix}
+    a &1&0\\
+    1&0&0\\
+    0&0&1
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="mA1_Inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty &1&0\\
+    1&0&0\\
+    0&0&1
+    \end{bmatrix}
+    \]
+    </div>
+  </div>
 </div>
-<div id="a">
-\[
-\begin{bmatrix}
-a &1&0\\
-1&0&0\\
-0&0&1
-\end{bmatrix}
-\]
+
+<div id="FlagVariety2" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="c2">c</label> 
+    <input type="range" name="c2" id="c2" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+  
+  <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
+    <div id="mA2" style="width:0px;visibility:visible">
+    \[
+    \begin{bmatrix}
+    1 &0&0\\
+    0&c&0\\
+    0&1&1
+    \end{bmatrix}
+    \]
+    </div>
+  </div>
 </div>
-<div id="aInf" style="width:0px;visibility:hidden">
-\[
-\begin{bmatrix}
-\infty &1&0\\
-1&0&0\\
-0&0&1
-\end{bmatrix}
-\]
+
+<div id="FlagVariety3" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
+    <div id="mA3" style="width:0px;visibility:visible">
+    \[
+    \begin{bmatrix}
+    a&b&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+  </div>
 </div>
+
+<div id="FlagVariety4" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
+    <div id="mA4" style="width:0px;visibility:visible">
+    \[
+    \begin{bmatrix}
+    d&1&0\\
+    c&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+  </div>
 </div>
+
+<div id="FlagVariety5" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
+    <div id="mA5" style="width:0px;visibility:visible">
+    \[
+    \begin{bmatrix}
+    d&e&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+  </div>
+</div>
+
 
 </body>
 </html>
