@@ -117,9 +117,9 @@ class FlagVariety1 extends FlagVariety
   updateMatrix()
   {
     var v = document.getElementById("a1");
-    var a1_0 = document.getElementById("mA1_0");
-    var a1 = document.getElementById("mA1");
-    var aInf = document.getElementById("mA1_Inf");
+    var a1_0 = document.getElementById("m1_0");
+    var a1 = document.getElementById("m1_a");
+    var aInf = document.getElementById("m1_inf");
     if (v.value === "0")
     {
       a1_0.style.visibility = 'visible';
@@ -146,12 +146,22 @@ class FlagVariety2 extends FlagVariety
   constructor(size, offset)
   {
     super(size, offset);
-    this.f1 = new Flag(400, 350, 100, 250, 400, 350);
-    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+
+    var ptx = 400;
+    var pty = 350;
+    var totalLen = 300;
+    var l1 = 1.0 * totalLen;
+    var l2 = 0.0 * totalLen;
+    var l3 = 0.7 * totalLen;
+    var cx = Math.cos(0.4);
+    var sx = Math.sin(0.4);    
+
+    this.f1 = new Flag(ptx, pty, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
+    this.f2 = new Flag(ptx, pty, 100, 350, 400, 350);
 
     var htmlElement = document.getElementById("FlagVariety2");
     this.sliderC = htmlElement.getElementsByClassName('slider')[0];
-    // TODO this.sliderC.onchange = this.updateMatrix;
+    this.sliderC.onchange = this.updateMatrix;
     this.sliderC.value = 50;
 
     var x = offset.x + 10; 
@@ -169,6 +179,28 @@ class FlagVariety2 extends FlagVariety
 
   updateMatrix()
   {
+    var v = document.getElementById("c2");
+    var m2_0 = document.getElementById("m2_0");
+    var m2_c = document.getElementById("m2_c");
+    var m2_inf = document.getElementById("m2_inf");
+    if (v.value === "0")
+    {
+      m2_0.style.visibility = 'visible';
+      m2_c.style.visibility = 'hidden';
+      m2_inf.style.visibility = 'hidden';
+    }
+    else if (v.value === "100")
+    {
+      m2_0.style.visibility = 'hidden';
+      m2_c.style.visibility = 'hidden';
+      m2_inf.style.visibility = 'visible';
+    }
+    else
+    {
+      m2_0.style.visibility = 'hidden';
+      m2_c.style.visibility = 'visible';
+      m2_inf.style.visibility = 'hidden';
+    }
   }
 }
 
@@ -312,7 +344,7 @@ function setup()
 
 function draw() 
 {
-   background(200);
+   background(250);
    for (var i = 0; i < varieties.length; i++)
    {
      varieties[i].draw();
@@ -331,7 +363,7 @@ function draw()
     \begin{bmatrix}
     1 &0&0\\
     0&1&0\\
-    0&0&1
+    0&0&1 
     \end{bmatrix}
     \]
     </div>
@@ -344,7 +376,7 @@ function draw()
     <input type="range" name="a1" id="a1" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
-    <div id="mA1_0" style="width:0px;visibility:hidden">
+    <div id="m1_0" style="width:0px;visibility:hidden">
     \[
     \begin{bmatrix}
     0 &1&0\\
@@ -353,7 +385,7 @@ function draw()
     \end{bmatrix}
     \]
     </div>
-    <div id="mA1" style="width:0px;visibility:visible">
+    <div id="m1_a" style="width:0px;visibility:visible">
     \[
     \begin{bmatrix}
     a &1&0\\
@@ -362,7 +394,7 @@ function draw()
     \end{bmatrix}
     \]
     </div>
-    <div id="mA1_Inf" style="width:0px;visibility:hidden">
+    <div id="m1_inf" style="width:0px;visibility:hidden">
     \[
     \begin{bmatrix}
     \infty &1&0\\
@@ -381,15 +413,33 @@ function draw()
   </div>
   
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
-    <div id="mA2" style="width:0px;visibility:visible">
+    <div id="m2_c" style="width:0px;visibility:visible">
     \[
     \begin{bmatrix}
     1 &0&0\\
-    0&c&0\\
-    0&1&1
+    0&c&1\\
+    0&1&0
     \end{bmatrix}
     \]
     </div>
+    <div id="m2_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    1 &0&0\\
+    0&0&1\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m2_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    1 &0&0\\
+    0&\infty &1\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>    
   </div>
 </div>
 
