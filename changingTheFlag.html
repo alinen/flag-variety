@@ -210,37 +210,95 @@ class FlagVariety3 extends FlagVariety
   {
     super(size, offset);
 
-    var ptx = 200;
-    var pty = 350;
-    var totalLen = 300;
-    var l1 = 0.3 * totalLen;
-    var l2 = 0.7 * totalLen;
-    var cx = Math.cos(-0.7);
-    var sx = Math.sin(-0.7);
-    this.f1 = new Flag(ptx, pty, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
-    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+    this.sliderA = null;
+    this.sliderB = null;
 
     var htmlElement = document.getElementById("FlagVariety3");
-    //this.sliderC = htmlElement.getElementsByClassName('slider')[0];
-    // TODO this.sliderC.onchange = this.updateMatrix;
-    //this.sliderC.value = 50;
+    var sliders = htmlElement.getElementsByClassName('slider');
+    for (var i = 0; i < sliders.length; i++)
+    {
+      if (sliders[i].id === "a3") this.sliderA = sliders[i];
+      else if (sliders[i].id === "b3") this.sliderB = sliders[i];
+    }
+
+    this.sliderA.onchange =  (function() { 
+        this.updateMatrix();            
+    }).bind(this);
+    this.sliderA.value = 50;
+
+    this.sliderB.onchange = this.updateMatrix.bind(this);
+    this.sliderB.value = 50;
 
     var x = offset.x + 10; 
     var y = offset.y + 10; 
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
+
+    this.matrices = [[],[],[]];
+    this.matrices[0][0] = document.getElementById("m3_a_b");
+    this.matrices[0][1] = document.getElementById("m3_a_0");
+    this.matrices[0][2] = document.getElementById("m3_a_inf");
+
+    this.matrices[1][0] = document.getElementById("m3_0_b");
+    this.matrices[1][1] = document.getElementById("m3_0_0");
+    this.matrices[1][2] = document.getElementById("m3_0_inf");
+
+    this.matrices[2][0] = document.getElementById("m3_inf_b");
+    this.matrices[2][1] = document.getElementById("m3_inf_0");
+    this.matrices[2][2] = document.getElementById("m3_inf_inf");
   }
 
   _draw()
   {
-     //var c = this.sliderC.value / 100.0;
-     //var flag = this.interpolate(this.f1, this.f2, c);
-     //flag.draw();
-    this.f1.draw();
+    var a = this.sliderA.value / 100.0;
+    var b = this.sliderB.value / 100.0;
+
+    var pivotx = 200;
+    var pivoty = 350;
+    var totalLen = 300;
+    var l1 = 0.3 * totalLen;
+    var l2 = 0.7 * totalLen;
+    var cx = Math.cos(-0.7 * (1-b));
+    var sx = Math.sin(-0.7 * (1-b));
+
+    var startx = pivotx-l1*cx;
+    var starty = pivoty-l1*sx;
+
+    var endx = pivotx+l2*cx;
+    var endy = pivoty+l2*sx;
+
+    var ptx = startx * (1-a) + endx * a;
+    var pty = starty * (1-a) + endy * a;
+    var f1 = new Flag(ptx, pty, startx, starty, endx, endy);
+    f1.draw();
   }
 
   updateMatrix()
   {
+    var a = this.sliderA.value;
+    var b = this.sliderB.value;
+
+    var activei = 0;
+    var activej = 0;
+    if (a === "0") activei = 1;
+    if (b === "0") activej = 1;
+    if (a === "100") activei = 2;
+    if (b === "100") activej = 2;
+
+    for (var i = 0; i < 3; i++)
+    {
+      for (var j = 0; j < 3; j++)
+      {
+        if (i === activei && j === activej)
+        {
+          this.matrices[i][j].visibility = "visible";
+        }
+        else
+        {
+          this.matrices[i][j].visibility = "hidden";
+        }
+      }
+    }
   }
 }
 
@@ -444,11 +502,92 @@ function draw()
 </div>
 
 <div id="FlagVariety3" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="a3">a</label> 
+    <input type="range" name="a3" id="a3" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="b3">b</label> 
+    <input type="range" name="b3" id="b3" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
-    <div id="mA3" style="width:0px;visibility:visible">
+    <div id="m3_a_b" style="width:0px;visibility:visible">
     \[
     \begin{bmatrix}
     a&b&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_a_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    a&0&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_a_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    a&\infty&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_0_b" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&b&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_0_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&0&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_0_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&\infty&1\\
+    0&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_inf_b" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&b&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_inf_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&0&1\\
+    1&0&0\\
+    0&1&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m3_inf_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&\infty&1\\
     1&0&0\\
     0&1&0
     \end{bmatrix}
