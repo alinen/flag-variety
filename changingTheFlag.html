@@ -6,6 +6,7 @@
 
 <script language="javascript" type="text/javascript">
 
+var varieties = [];
 class Flag
 {
   constructor(ptx, pty, linex1, liney1, linex2, liney2)
@@ -221,13 +222,20 @@ class FlagVariety3 extends FlagVariety
       else if (sliders[i].id === "b3") this.sliderB = sliders[i];
     }
 
-    this.sliderA.onchange =  (function() { 
-        this.updateMatrix();            
-    }).bind(this);
+    this.sliderA.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
     this.sliderA.value = 50;
 
-    this.sliderB.onchange = this.updateMatrix.bind(this);
+    this.sliderB.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
     this.sliderB.value = 50;
+
 
     var x = offset.x + 10; 
     var y = offset.y + 10; 
@@ -246,6 +254,7 @@ class FlagVariety3 extends FlagVariety
     this.matrices[2][0] = document.getElementById("m3_inf_b");
     this.matrices[2][1] = document.getElementById("m3_inf_0");
     this.matrices[2][2] = document.getElementById("m3_inf_inf");
+
   }
 
   _draw()
@@ -291,11 +300,11 @@ class FlagVariety3 extends FlagVariety
       {
         if (i === activei && j === activej)
         {
-          this.matrices[i][j].visibility = "visible";
+          this.matrices[i][j].style.visibility = "visible";
         }
         else
         {
-          this.matrices[i][j].visibility = "hidden";
+          this.matrices[i][j].style.visibility = "hidden";
         }
       }
     }
@@ -384,7 +393,7 @@ class FlagVariety5 extends FlagVariety
   }
 }
 
-var varieties = [];
+
 function setup() 
 {
   var size = 200;
