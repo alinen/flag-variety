@@ -317,38 +317,101 @@ class FlagVariety4 extends FlagVariety
   {
     super(size, offset);
 
-    var ptx = 400;
-    var pty = 350;
-    var totalLen = 300;
-    var l1 = 1.0 * totalLen;
-    var l2 = 0.0 * totalLen;
-    var l3 = 0.7 * totalLen;
-    var cx = Math.cos(0.4);
-    var sx = Math.sin(0.4);
-    this.f1 = new Flag(ptx-l3*cx, pty-l3*sx, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
-    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
+    this.sliderD = null;
+    this.sliderC = null;
 
     var htmlElement = document.getElementById("FlagVariety4");
-    //this.sliderC = htmlElement.getElementsByClassName('slider')[0];
-    // TODO this.sliderC.onchange = this.updateMatrix;
-    //this.sliderC.value = 50;
+    var sliders = htmlElement.getElementsByClassName('slider');
+    for (var i = 0; i < sliders.length; i++)
+    {
+      if (sliders[i].id === "d4") this.sliderD = sliders[i];
+      else if (sliders[i].id === "c4") this.sliderC = sliders[i];
+    }
+
+    this.sliderD.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
+    this.sliderD.value = 50;
+
+    this.sliderC.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
+    this.sliderC.value = 50;
 
     var x = offset.x + 10; 
     var y = offset.y + 10; 
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
+
+    this.matrices = [[],[],[]];
+    this.matrices[0][0] = document.getElementById("m4_d_c");
+    this.matrices[0][1] = document.getElementById("m4_d_0");
+    this.matrices[0][2] = document.getElementById("m4_d_inf");
+
+    this.matrices[1][0] = document.getElementById("m4_0_c");
+    this.matrices[1][1] = document.getElementById("m4_0_0");
+    this.matrices[1][2] = document.getElementById("m4_0_inf");
+
+    this.matrices[2][0] = document.getElementById("m4_inf_c");
+    this.matrices[2][1] = document.getElementById("m4_inf_0");
+    this.matrices[2][2] = document.getElementById("m4_inf_inf");
   }
 
   _draw()
   {
-    //var c = this.sliderC.value / 100.0;
-    //var flag = this.interpolate(this.f1, this.f2, c);
-    //flag.draw();
-    this.f1.draw();
+    var d = this.sliderD.value / 100.0;
+    var c = this.sliderC.value / 100.0;
+
+    var pivotx = 400;
+    var pivoty = 350;
+    var totalLen = 300;
+    var l1 = 1.0 * totalLen;
+    var l2 = 0.0 * totalLen;
+    var cx = Math.cos(0.7 * (1-d));
+    var sx = Math.sin(0.7 * (1-d));
+
+    var startx = pivotx-l1*cx;
+    var starty = pivoty-l1*sx;
+
+    var endx = pivotx+l2*cx;
+    var endy = pivoty+l2*sx;
+
+    var ptx = startx * (1-c) + endx * c;
+    var pty = starty * (1-c) + endy * c;
+    var f1 = new Flag(ptx, pty, startx, starty, endx, endy);
+    f1.draw();
   }
 
   updateMatrix()
   {
+    var d = this.sliderD.value;
+    var c = this.sliderC.value;
+
+    var activei = 0;
+    var activej = 0;
+    if (d === "0") activei = 1;
+    if (c === "0") activej = 1;
+    if (d === "100") activei = 2;
+    if (c === "100") activej = 2;
+
+    for (var i = 0; i < 3; i++)
+    {
+      for (var j = 0; j < 3; j++)
+      {
+        if (i === activei && j === activej)
+        {
+          this.matrices[i][j].style.visibility = "visible";
+        }
+        else
+        {
+          this.matrices[i][j].style.visibility = "hidden";
+        }
+      }
+    }    
   }
 }
 
@@ -606,12 +669,93 @@ function draw()
 </div>
 
 <div id="FlagVariety4" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="d4">d</label> 
+    <input type="range" name="d4" id="d4" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="c4">c</label> 
+    <input type="range" name="c4" id="c4" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+  
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
-    <div id="mA4" style="width:0px;visibility:visible">
+    <div id="m4_d_c" style="width:0px;visibility:visible">
     \[
     \begin{bmatrix}
     d&1&0\\
     c&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_d_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&1&0\\
+    0&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_d_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&1&0\\
+    \infty&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_0_c" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&1&0\\
+    c&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_0_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&1&0\\
+    0&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_0_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&1&0\\
+    \infty&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_inf_c" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&1&0\\
+    c&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_inf_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&1&0\\
+    0&0&1\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m4_inf_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&1&0\\
+    \infty&0&1\\
     1&0&0
     \end{bmatrix}
     \]
