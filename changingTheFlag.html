@@ -420,6 +420,88 @@ class FlagVariety5 extends FlagVariety
   constructor(size, offset)
   {
     super(size, offset);
+
+    this.sliderD = null;
+    this.sliderC = null;
+    this.sliderE = null;
+
+    var htmlElement = document.getElementById("FlagVariety5");
+    var sliders = htmlElement.getElementsByClassName('slider');
+    for (var i = 0; i < sliders.length; i++)
+    {
+      if (sliders[i].id === "d5") this.sliderD = sliders[i];
+      else if (sliders[i].id === "c5") this.sliderC = sliders[i];
+      else if (sliders[i].id === "e5") this.sliderE = sliders[i];
+    }
+
+    this.sliderD.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
+    this.sliderD.value = 50;
+
+    this.sliderC.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
+    this.sliderC.value = 50;
+
+    this.sliderE.onchange = (function(variety) {
+      return function(evt) {
+        variety.updateMatrix();
+      };
+    })(this);
+    this.sliderC.value = 50;
+
+    var x = offset.x + 10; 
+    var y = offset.y + 10; 
+    htmlElement.style.top = y+"px";
+    htmlElement.style.left = x+"px";
+
+    this.matrices = [[[],[],[]],[[],[],[]],[[],[],[]]];
+    this.matrices[0][0][0] = document.getElementById("m5_d_c_e");
+    this.matrices[0][0][1] = document.getElementById("m5_d_c_0");
+    this.matrices[0][0][2] = document.getElementById("m5_d_c_inf");
+
+    this.matrices[0][1][0] = document.getElementById("m5_d_0_e");
+    this.matrices[0][1][1] = document.getElementById("m5_d_0_0");
+    this.matrices[0][1][2] = document.getElementById("m5_d_0_inf");
+
+    this.matrices[0][2][0] = document.getElementById("m5_d_inf_e");
+    this.matrices[0][2][1] = document.getElementById("m5_d_inf_0");
+    this.matrices[0][2][2] = document.getElementById("m5_d_inf_inf");
+
+    this.matrices[1][0][0] = document.getElementById("m5_0_c_e");
+    this.matrices[1][0][1] = document.getElementById("m5_0_c_0");
+    this.matrices[1][0][2] = document.getElementById("m5_0_c_inf");
+
+    this.matrices[1][1][0] = document.getElementById("m5_0_0_e");
+    this.matrices[1][1][1] = document.getElementById("m5_0_0_0");
+    this.matrices[1][1][2] = document.getElementById("m5_0_0_inf");
+
+    this.matrices[1][2][0] = document.getElementById("m5_0_inf_e");
+    this.matrices[1][2][1] = document.getElementById("m5_0_inf_0");
+    this.matrices[1][2][2] = document.getElementById("m5_0_inf_inf");
+
+    this.matrices[2][0][0] = document.getElementById("m5_inf_c_e");
+    this.matrices[2][0][1] = document.getElementById("m5_inf_c_0");
+    this.matrices[2][0][2] = document.getElementById("m5_inf_c_inf");
+
+    this.matrices[2][1][0] = document.getElementById("m5_inf_0_e");
+    this.matrices[2][1][1] = document.getElementById("m5_inf_0_0");
+    this.matrices[2][1][2] = document.getElementById("m5_inf_0_inf");
+
+    this.matrices[2][2][0] = document.getElementById("m5_inf_inf_e");
+    this.matrices[2][2][1] = document.getElementById("m5_inf_inf_0");
+    this.matrices[2][2][2] = document.getElementById("m5_inf_inf_inf");
+  }
+
+  _draw()
+  {
+     //var c = this.sliderC.value / 100.0;
+     //var flag = this.interpolate(this.f1, this.f2, c);
     var ptx = 400;
     var pty = 200;
     var totalLen = 300;
@@ -428,31 +510,44 @@ class FlagVariety5 extends FlagVariety
     var l3 = 0.7 * totalLen;
     var cx = Math.cos(-0.4);
     var sx = Math.sin(-0.4);
-    this.f1 = new Flag(ptx-l3*cx, pty-l3*sx, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
-
-    this.f2 = new Flag(400, 350, 100, 350, 400, 350);
-
-    var htmlElement = document.getElementById("FlagVariety5");
-    //this.sliderC = htmlElement.getElementsByClassName('slider')[0];
-    // TODO this.sliderC.onchange = this.updateMatrix;
-    //this.sliderC.value = 50;
-
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
-    htmlElement.style.top = y+"px";
-    htmlElement.style.left = x+"px";
-  }
-
-  _draw()
-  {
-     //var c = this.sliderC.value / 100.0;
-     //var flag = this.interpolate(this.f1, this.f2, c);
-     //flag.draw();
-    this.f1.draw();
+    var f1 = new Flag(ptx-l3*cx, pty-l3*sx, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
+    f1.draw();
   }
 
   updateMatrix()
   {
+    console.log("HERE");
+    var d = this.sliderD.value;
+    var c = this.sliderC.value;
+    var e = this.sliderE.value;
+
+    var activei = 0;
+    var activej = 0;
+    var activek = 0;
+    if (d === "0") activei = 1;
+    if (c === "0") activej = 1;
+    if (e === "0") activek = 1;
+    if (d === "100") activei = 2;
+    if (c === "100") activej = 2;
+    if (e === "100") activek = 2;
+
+    for (var i = 0; i < 3; i++)
+    {
+      for (var j = 0; j < 3; j++)
+      {
+        for (var k = 0; k < 3; k++)
+        {
+          if (i === activei && j === activej && k === activek)
+          {
+            this.matrices[i][j][k].style.visibility = "visible";
+          }
+          else
+          {
+            this.matrices[i][j][k].style.visibility = "hidden";
+          }
+        }
+      }
+    }    
   }
 }
 
@@ -764,12 +859,258 @@ function draw()
 </div>
 
 <div id="FlagVariety5" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="d5">d</label> 
+    <input type="range" name="d5" id="d5" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="c5">c</label> 
+    <input type="range" name="c5" id="c5" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>  
+  <div id="slider" style="top:1em;left:1em;">
+    <label for="e5">e</label> 
+    <input type="range" name="e5" id="e5" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
+  </div>  
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
-    <div id="mA5" style="width:0px;visibility:visible">
+    <div id="m5_d_c_e" style="width:0px;visibility:visible">
     \[
     \begin{bmatrix}
     d&e&1\\
     c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_c_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&0&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_c_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&\infty&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_0_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&e&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_0_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&0&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_0_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&\infty&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_inf_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&e&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_inf_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&0&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_d_inf_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    d&\infty&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_c_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&e&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_c_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&0&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_c_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&\infty&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_0_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&e&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_0_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&0&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_0_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&\infty&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_inf_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&e&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_inf_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&0&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_0_inf_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    0&\infty&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_c_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&e&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_c_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&0&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_c_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&\infty&1\\
+    c&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_0_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&e&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_0_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&0&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_0_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&\infty&1\\
+    0&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_inf_e" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&e&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_inf_0" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&0&1\\
+    \infty&1&0\\
+    1&0&0
+    \end{bmatrix}
+    \]
+    </div>
+    <div id="m5_inf_inf_inf" style="width:0px;visibility:hidden">
+    \[
+    \begin{bmatrix}
+    \infty&\infty&1\\
+    \infty&1&0\\
     1&0&0
     \end{bmatrix}
     \]
