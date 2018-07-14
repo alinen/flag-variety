@@ -500,23 +500,41 @@ class FlagVariety5 extends FlagVariety
 
   _draw()
   {
-     //var c = this.sliderC.value / 100.0;
-     //var flag = this.interpolate(this.f1, this.f2, c);
-    var ptx = 400;
-    var pty = 200;
+    var d = this.sliderD.value / 100.0;
+    var c = this.sliderC.value / 100.0;
+    var e = this.sliderE.value / 100.0;
     var totalLen = 300;
-    var l1 = 1.0 * totalLen;
-    var l2 = 0.0 * totalLen;
-    var l3 = 0.7 * totalLen;
-    var cx = Math.cos(-0.4);
-    var sx = Math.sin(-0.4);
-    var f1 = new Flag(ptx-l3*cx, pty-l3*sx, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
+
+    var epivotx = 200;
+    var epivoty = 350;
+    var l1 = 0.7 * totalLen;
+    var l2 = 0.3 * totalLen;
+    var cx = Math.cos(-0.7 * (1-e));
+    var sx = Math.sin(-0.7 * (1-e));
+
+    var startx1 = epivotx-l2*cx;
+    var starty1 = epivoty-l2*sx;
+
+    var endx1 = epivotx+l1*cx;
+    var endy1 = epivoty+l1*sx;
+
+    cx = Math.cos(-0.7 * (1-d));
+    sx = Math.sin(-0.7 * (1-d));
+
+    var ox = startx1 - endx1;
+    var oy = starty1 - endy1;
+    var startx2 = ox*cx + oy*sx + endx1;
+    var starty2 = -sx*ox + cx*oy + endy1;
+
+    var ptx = startx2* (1-c) + endx1* c;
+    var pty = starty2* (1-c) + endy1* c;
+
+    var f1 = new Flag(ptx, pty, startx2, starty2, endx1, endy1);
     f1.draw();
   }
 
   updateMatrix()
   {
-    console.log("HERE");
     var d = this.sliderD.value;
     var c = this.sliderC.value;
     var e = this.sliderE.value;
