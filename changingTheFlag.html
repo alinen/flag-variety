@@ -1,6 +1,6 @@
 <html>
 <script language="javascript" type="text/javascript" src="p5.min.js"></script>
-<script type="text/javascript" 
+<script type="text/javascript"
 	 src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
@@ -31,7 +31,7 @@ class Flag
      stroke(0, 0, 0);
      strokeWeight(2);
      ellipse(400, 350, 25, 25);
-     line(100, 350, 400, 350);      
+     line(100, 350, 400, 350);
   }
 }
 
@@ -60,7 +60,7 @@ class FlagVariety
      translate(this.offset.x, this.offset.y);
      scale(this.scale);
      this._draw();
-     pop();    
+     pop();
   }
 
   _draw()
@@ -77,8 +77,8 @@ class FlagVariety0 extends FlagVariety
     this.f2 = new Flag(400, 350, 100, 350, 400, 350);
 
     var htmlElement = document.getElementById("FlagVariety0");
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
+    var x = offset.x + 10;
+    var y = offset.y + 10;
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
   }
@@ -102,8 +102,8 @@ class FlagVariety1 extends FlagVariety
     this.sliderA.onchange = this.updateMatrix;
     this.sliderA.value = 50;
 
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
+    var x = offset.x + 10;
+    var y = offset.y + 10;
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
   }
@@ -155,7 +155,7 @@ class FlagVariety2 extends FlagVariety
     var l2 = 0.0 * totalLen;
     var l3 = 0.7 * totalLen;
     var cx = Math.cos(0.4);
-    var sx = Math.sin(0.4);    
+    var sx = Math.sin(0.4);
 
     this.f1 = new Flag(ptx, pty, ptx-l1*cx, pty-l1*sx, ptx+l2*cx, pty+l2*sx);
     this.f2 = new Flag(ptx, pty, 100, 350, 400, 350);
@@ -165,8 +165,8 @@ class FlagVariety2 extends FlagVariety
     this.sliderC.onchange = this.updateMatrix;
     this.sliderC.value = 50;
 
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
+    var x = offset.x + 10;
+    var y = offset.y + 10;
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
   }
@@ -237,8 +237,8 @@ class FlagVariety3 extends FlagVariety
     this.sliderB.value = 50;
 
 
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
+    var x = offset.x + 10;
+    var y = offset.y + 10;
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
 
@@ -262,8 +262,13 @@ class FlagVariety3 extends FlagVariety
     var a = this.sliderA.value / 100.0;
     var b = this.sliderB.value / 100.0;
 
-    var pivotx = 200;
-    var pivoty = 350;
+//		var ptx = startx * (1-a) + endx * a;
+//    var pty = starty * (1-a) + endy * a;
+
+		var ptx = 100*(1-a) + 400*(a)
+		var pty = 350
+    var pivotx = ptx;
+    var pivoty = pty;
     var totalLen = 300;
     var l1 = 0.3 * totalLen;
     var l2 = 0.7 * totalLen;
@@ -276,8 +281,7 @@ class FlagVariety3 extends FlagVariety
     var endx = pivotx+l2*cx;
     var endy = pivoty+l2*sx;
 
-    var ptx = startx * (1-a) + endx * a;
-    var pty = starty * (1-a) + endy * a;
+
     var f1 = new Flag(ptx, pty, startx, starty, endx, endy);
     f1.draw();
   }
@@ -342,8 +346,8 @@ class FlagVariety4 extends FlagVariety
     })(this);
     this.sliderC.value = 50;
 
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
+    var x = offset.x + 10;
+    var y = offset.y + 10;
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
 
@@ -380,8 +384,8 @@ class FlagVariety4 extends FlagVariety
     var endx = pivotx+l2*cx;
     var endy = pivoty+l2*sx;
 
-    var ptx = startx * (1-c) + endx * c;
-    var pty = starty * (1-c) + endy * c;
+    var ptx = 100 * (1-c) + 400 * c;
+    var pty = 350 * (1-c) + endy * c;
     var f1 = new Flag(ptx, pty, startx, starty, endx, endy);
     f1.draw();
   }
@@ -411,7 +415,7 @@ class FlagVariety4 extends FlagVariety
           this.matrices[i][j].style.visibility = "hidden";
         }
       }
-    }    
+    }
   }
 }
 
@@ -455,8 +459,8 @@ class FlagVariety5 extends FlagVariety
     })(this);
     this.sliderC.value = 50;
 
-    var x = offset.x + 10; 
-    var y = offset.y + 10; 
+    var x = offset.x + 10;
+    var y = offset.y + 10;
     htmlElement.style.top = y+"px";
     htmlElement.style.left = x+"px";
 
@@ -565,12 +569,12 @@ class FlagVariety5 extends FlagVariety
           }
         }
       }
-    }    
+    }
   }
 }
 
 
-function setup() 
+function setup()
 {
   var size = 200;
   var width = size * 3;
@@ -585,7 +589,7 @@ function setup()
   varieties.push(new FlagVariety0(size, {x:size,   y:size*3}));
 }
 
-function draw() 
+function draw()
 {
    background(250);
    for (var i = 0; i < varieties.length; i++)
@@ -606,7 +610,7 @@ function draw()
     \begin{bmatrix}
     1 &0&0\\
     0&1&0\\
-    0&0&1 
+    0&0&1
     \end{bmatrix}
     \]
     </div>
@@ -615,7 +619,7 @@ function draw()
 
 <div id="FlagVariety1" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
   <div id="slider" style="top:1em;left:1em;">
-    <label for="a1">a</label> 
+    <label for="a1">a</label>
     <input type="range" name="a1" id="a1" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
@@ -651,10 +655,10 @@ function draw()
 
 <div id="FlagVariety2" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
   <div id="slider" style="top:1em;left:1em;">
-    <label for="c2">c</label> 
+    <label for="c2">c</label>
     <input type="range" name="c2" id="c2" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
-  
+
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
     <div id="m2_c" style="width:0px;visibility:visible">
     \[
@@ -682,17 +686,17 @@ function draw()
     0&1&0
     \end{bmatrix}
     \]
-    </div>    
+    </div>
   </div>
 </div>
 
 <div id="FlagVariety3" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
   <div id="slider" style="top:1em;left:1em;">
-    <label for="a3">a</label> 
+    <label for="a3">a</label>
     <input type="range" name="a3" id="a3" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
   <div id="slider" style="top:1em;left:1em;">
-    <label for="b3">b</label> 
+    <label for="b3">b</label>
     <input type="range" name="b3" id="b3" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
 
@@ -746,7 +750,7 @@ function draw()
     \[
     \begin{bmatrix}
     0&\infty&1\\
-    0&0&0\\
+    1&0&0\\
     0&1&0
     \end{bmatrix}
     \]
@@ -783,14 +787,14 @@ function draw()
 
 <div id="FlagVariety4" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
   <div id="slider" style="top:1em;left:1em;">
-    <label for="d4">d</label> 
+    <label for="d4">d</label>
     <input type="range" name="d4" id="d4" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
   <div id="slider" style="top:1em;left:1em;">
-    <label for="c4">c</label> 
+    <label for="c4">c</label>
     <input type="range" name="c4" id="c4" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
-  
+
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
     <div id="m4_d_c" style="width:0px;visibility:visible">
     \[
@@ -878,17 +882,17 @@ function draw()
 
 <div id="FlagVariety5" style="margin:0px;padding:0px;position:absolute;top:1em;left:1em">
   <div id="slider" style="top:1em;left:1em;">
-    <label for="d5">d</label> 
+    <label for="d5">d</label>
     <input type="range" name="d5" id="d5" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
   </div>
   <div id="slider" style="top:1em;left:1em;">
-    <label for="c5">c</label> 
+    <label for="c5">c</label>
     <input type="range" name="c5" id="c5" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
-  </div>  
+  </div>
   <div id="slider" style="top:1em;left:1em;">
-    <label for="e5">e</label> 
+    <label for="e5">e</label>
     <input type="range" name="e5" id="e5" class="slider" value="50" min="0" max="100"" style="vertical-align:middle;width:50px"/>
-  </div>  
+  </div>
   <div style="display:flex;flex-direction:row;flex-wrap:nowrap">
     <div id="m5_d_c_e" style="width:0px;visibility:visible">
     \[
@@ -1139,5 +1143,3 @@ function draw()
 
 </body>
 </html>
-
-
